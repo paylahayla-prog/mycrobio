@@ -10,18 +10,20 @@ export const ApiConfigModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const { config, setConfig } = useApiConfig();
   const [apiKey, setApiKey] = useState<string>(config.apiKey);
   const [model, setModel] = useState<string>(config.model || 'gemini-2.5-flash');
+  const [reportDetail, setReportDetail] = useState<'normal' | 'more'>(config.reportDetail || 'more');
 
   useEffect(() => {
     if (isOpen) {
       setApiKey(config.apiKey);
       setModel(config.model || 'gemini-2.5-flash');
+      setReportDetail((config.reportDetail === 'normal' || config.reportDetail === 'more') ? config.reportDetail : 'more');
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   const onSave = () => {
-    setConfig({ apiKey, model });
+    setConfig({ apiKey, model, reportDetail });
     onClose();
   };
 
@@ -56,8 +58,22 @@ export const ApiConfigModal: React.FC<Props> = ({ isOpen, onClose }) => {
             />
           </div>
 
+          <div className="mt-2 p-2 border border-[#30363d] rounded bg-[#0d1117]">
+            <label className="flex items-start gap-2 text-sm text-gray-300">
+              <input
+                type="checkbox"
+                checked={reportDetail === 'more'}
+                onChange={(e) => setReportDetail(e.target.checked ? 'more' : 'normal')}
+                className="mt-0.5"
+              />
+              <span>
+                More detailed reporting (expanded pathway evidence, clinical interpretation, and antibiogram correlation).
+              </span>
+            </label>
+          </div>
+
           <div className="bg-[#0d1117] border border-[#30363d] rounded p-3 text-xs text-gray-400">
-            <p>Your key is stored locally in your browser (localStorage) and used directly from your device.</p>
+            <p>Keys are stored locally in your browser (localStorage) and used only from your device.</p>
           </div>
         </div>
 

@@ -3,6 +3,7 @@
 export interface ApiConfig {
   apiKey: string;
   model?: string;
+  reportDetail?: 'normal' | 'more';
 }
 
 interface ApiConfigContextValue {
@@ -13,6 +14,7 @@ interface ApiConfigContextValue {
 const DEFAULTS: ApiConfig = {
   apiKey: '',
   model: 'gemini-2.5-flash',
+  reportDetail: 'more',
 };
 
 const STORAGE_KEY = 'microbeMapApiConfig';
@@ -38,6 +40,7 @@ export const ApiConfigProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setConfigState({
       apiKey: c.apiKey,
       model: c.model || 'gemini-2.5-flash',
+      reportDetail: (c.reportDetail === 'normal' || c.reportDetail === 'more') ? c.reportDetail : 'more',
     });
   };
 
@@ -51,3 +54,4 @@ export const useApiConfig = () => {
   if (!ctx) throw new Error('useApiConfig must be used within ApiConfigProvider');
   return ctx;
 };
+

@@ -1,4 +1,5 @@
 ﻿import { getStaticKnowledge } from './knowledgeStatic';
+import { getReportingGuidance } from './reporting';
 import { GoogleGenAI } from '@google/genai';
 import type { AIResponse, Role } from '../types';
 import { systemPromptEN, systemPromptFR, helpSystemPromptEN, helpSystemPromptFR } from './prompts';
@@ -41,7 +42,7 @@ export const getAiResponse = async (
     model: config.model || 'gemini-2.5-flash',
     contents: conversationHistory,
     config: {
-      systemInstruction: getSystemPrompt(language) + "\n\nKNOWLEDGE_STATIC:\n" + getStaticKnowledge(language),
+      systemInstruction: getSystemPrompt(language) + "\n\nKNOWLEDGE_STATIC:\n" + getStaticKnowledge(language) + "\n\nREPORTING_GUIDANCE:\n" + getReportingGuidance(language, (config.reportDetail === 'normal' || config.reportDetail === 'more') ? config.reportDetail : 'more'),
       responseMimeType: 'application/json',
     },
   });
@@ -65,5 +66,7 @@ export const getAiHelp = async (
   });
   return (response as any).text ?? '';
 };
+
+
 
 
