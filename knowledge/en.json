@@ -1,4 +1,4 @@
-﻿{
+{
   "identification": {
     "rules": [
       "Always begin with specimen context (type, colony count) before asking tests.",
