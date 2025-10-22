@@ -1,8 +1,8 @@
-﻿import { GoogleGenAI } from '@google/genai';
+﻿import { getStaticKnowledge } from './knowledgeStatic';
+import { GoogleGenAI } from '@google/genai';
 import type { AIResponse, Role } from '../types';
 import { systemPromptEN, systemPromptFR, helpSystemPromptEN, helpSystemPromptFR } from './prompts';
 import type { ApiConfig } from '../contexts/ApiConfigContext';
-import { ensureKnowledgeLoaded, getRelevantSnippets } from './knowledge';
 
 const getSystemPrompt = (language: 'en' | 'fr'): string => (language === 'fr' ? systemPromptFR : systemPromptEN);
 const getHelpSystemPrompt = (language: 'en' | 'fr'): string => (language === 'fr' ? helpSystemPromptFR : helpSystemPromptEN);
@@ -36,22 +36,12 @@ export const getAiResponse = async (
   config: ApiConfig,
 ): Promise<AIResponse> => {
   if (!config?.apiKey) throw new Error('No API key configured. Open API Settings to add one.');
-
-  await ensureKnowledgeLoaded();
-  const snips = getRelevantSnippets(conversationHistory as any, 'auto', 5);
-  const kb = [
-    '--- IDENTIFICATION SNIPPETS ---',
-    ...snips.identification,
-    '--- SENSITIVITY SNIPPETS ---',
-    ...snips.sensitivity,
-  ].join('\n');
-
   const ai = new GoogleGenAI({ apiKey: config.apiKey });
   const response = await ai.models.generateContent({
     model: config.model || 'gemini-2.5-flash',
     contents: conversationHistory,
     config: {
-      systemInstruction: getSystemPrompt(language) + "\n\nKNOWLEDGE_BASE_SNIPPETS:\n" + kb,
+      systemInstruction: getSystemPrompt(language) + "\n\nKNOWLEDGE_STATIC:\n" + getStaticKnowledge(language),
       responseMimeType: 'application/json',
     },
   });
@@ -75,3 +65,5 @@ export const getAiHelp = async (
   });
   return (response as any).text ?? '';
 };
+
+

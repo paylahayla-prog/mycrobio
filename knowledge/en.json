@@ -1,0 +1,26 @@
+﻿{
+  "identification": {
+    "rules": [
+      "Always begin with specimen context (type, colony count) before asking tests.",
+      "Ask one test at a time (e.g., oxidase, catalase, indole, MR/VP).",
+      "Enterobacteriaceae: use Gram, oxidase negative, then differentiate via indole, citrate, urease, TSI, MR/VP.",
+      "For urine (ECBU): collect patient gender and catheterization status before interpretation."
+    ],
+    "decision_paths": [
+      "Gram-negative bacilli → Oxidase? If positive → Pseudomonas/Aeromonas path; if negative → Enterobacteriaceae path.",
+      "Staphylococci: Coagulase test → positive suggests S. aureus; negative suggests CoNS; confirm with novobiocin if needed."
+    ]
+  },
+  "sensitivity": {
+    "rules": [
+      "Interpret per national guidelines (disc diameter or MIC thresholds).",
+      "Flag contradictions between expected natural resistance and reported sensitivity.",
+      "Always ask for and record the method (disk diffusion vs MIC)."
+    ],
+    "urine_interpretation": [
+      ">= 10^5 CFU/mL generally significant in symptomatic adults (species-dependent).",
+      "10^3–10^5 CFU/mL: correlate with symptoms and collection quality.",
+      "< 10^3 CFU/mL often contamination unless special contexts."
+    ]
+  }
+}

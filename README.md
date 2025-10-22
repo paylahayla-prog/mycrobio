@@ -64,3 +64,13 @@ View your app in AI Studio: https://ai.studio/apps/drive/1CGUqra14-4qEYi-ATB48YQ
   - Provider: choose Gemini or OpenAI‑compatible.
   - Paste your API key. For OpenAI‑compatible, use a preset to fill Base URL/model or enter manually.
   - Save and start a new chat.
+
+## Edit Embedded Knowledge (No PDFs)
+
+- Files: `knowledge/en.json`, `knowledge/fr.json`
+- What they do: Add concise rules, decision paths, and interpretation guidance; the app injects these into the Gemini system prompt.
+- How to edit:
+  - Keep items short and specific.
+  - Prioritize differential tests (oxidase/catalase/indole/MR-VP) and clinical interpretation (e.g., urine CFU thresholds).
+  - Update both EN and FR if you use both languages.
+- Preview in app: Click `KB` in the header to view what is injected for the current language.

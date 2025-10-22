@@ -1,0 +1,26 @@
+﻿{
+  "identification": {
+    "rules": [
+      "Toujours commencer par le contexte du prélèvement (type, numération) avant les tests.",
+      "Poser un test à la fois (ex. oxydase, catalase, indole, MR/VP).",
+      "Entérobactéries : Gram, oxydase négative, puis différencier via indole, citrate, uréase, TSI, MR/VP.",
+      "Pour l'urine (ECBU) : recueillir le sexe et le statut de sondage avant l'interprétation."
+    ],
+    "decision_paths": [
+      "Bacilles Gram négatifs → Oxydase ? Si positive → Pseudomonas/Aeromonas; si négative → Entérobactéries.",
+      "Staphylocoques : test de coagulase → positif évoque S. aureus ; négatif évoque CoNS ; confirmer avec la novobiocine si besoin."
+    ]
+  },
+  "sensitivity": {
+    "rules": [
+      "Interpréter selon les recommandations nationales (seuils de diamètre ou de CMI).",
+      "Signaler les contradictions entre la résistance naturelle attendue et la sensibilité rapportée.",
+      "Toujours demander et noter la méthode (diffusion en disque vs CMI)."
+    ],
+    "urine_interpretation": [
+      ">= 10^5 UFC/mL généralement significatif chez l'adulte symptomatique (selon l'espèce).",
+      "10^3–10^5 UFC/mL : corréler avec les symptômes et la qualité du prélèvement.",
+      "< 10^3 UFC/mL souvent contamination sauf contextes particuliers."
+    ]
+  }
+}

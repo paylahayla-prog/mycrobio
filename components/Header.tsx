@@ -1,4 +1,5 @@
-﻿import React, { useState } from 'react';
+﻿import { KnowledgeModal } from './KnowledgeModal';
+import React, { useState } from 'react';
 import type { PrelevementInfo } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ApiConfigModal } from './ApiConfigModal';
@@ -42,6 +43,7 @@ const LanguageSwitcher: React.FC = () => {
 export const Header: React.FC<HeaderProps> = ({ info, isFinished, onToggleSidebar }) => {
     const { t } = useLanguage();
     const [showApi, setShowApi] = useState(false);
+    const [showKb, setShowKb] = useState(false);
     return (
         <header className="bg-[#161b22] p-4 rounded-t-lg flex items-center gap-4 border-b border-[#30363d] flex-shrink-0">
             <button
@@ -70,9 +72,12 @@ export const Header: React.FC<HeaderProps> = ({ info, isFinished, onToggleSideba
                     <p className="text-sm text-gray-400">{t('header.ready')}</p>
                 )}
             </div>
+            <button onClick={() => setShowKb(true)} className="text-xs font-bold bg-[#21262d] border border-[#30363d] text-gray-300 py-1 px-3 rounded-md hover:bg-[#30363d] transition-colors">KB</button>
             <button onClick={() => setShowApi(true)} className="text-xs font-bold bg-[#21262d] border border-[#30363d] text-gray-300 py-1 px-3 rounded-md hover:bg-[#30363d] transition-colors">API</button>
             <LanguageSwitcher />
             <ApiConfigModal isOpen={showApi} onClose={() => setShowApi(false)} />
+            <KnowledgeModal isOpen={showKb} onClose={() => setShowKb(false)} />
         </header>
     );
 };
+
