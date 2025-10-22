@@ -1,13 +1,8 @@
 ﻿import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-export type ProviderType = 'gemini' | 'openai' | 'openai-compatible';
-
 export interface ApiConfig {
-  provider: ProviderType;
   apiKey: string;
   model?: string;
-  baseUrl?: string; // used for openai-compatible
-  directClient?: boolean; // directly call provider from browser
 }
 
 interface ApiConfigContextValue {
@@ -16,10 +11,8 @@ interface ApiConfigContextValue {
 }
 
 const DEFAULTS: ApiConfig = {
-  provider: 'gemini',
   apiKey: '',
   model: 'gemini-2.5-flash',
-  directClient: false,
 };
 
 const STORAGE_KEY = 'microbeMapApiConfig';
@@ -43,11 +36,8 @@ export const ApiConfigProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const setConfig = (c: ApiConfig) => {
     setConfigState({
-      provider: c.provider,
       apiKey: c.apiKey,
-      model: c.model || (c.provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini'),
-      baseUrl: c.baseUrl,
-      directClient: !!c.directClient,
+      model: c.model || 'gemini-2.5-flash',
     });
   };
 
