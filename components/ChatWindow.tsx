@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Message } from './Message';
 import { TypingIndicator } from './TypingIndicator';
 import type { ChatMessage } from '../types';
@@ -12,6 +12,28 @@ interface ChatWindowProps {
 export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading }) => {
     const chatWindowRef = useRef<HTMLDivElement>(null);
     const [showScrollDown, setShowScrollDown] = useState(false);
+    const itemsWithSeparators = useMemo(() => {
+        const out: Array<{ type: 'separator'; label: string } | { type: 'msg'; index: number }> = [];
+        let lastDate: string | null = null;
+        messages.forEach((m, idx) => {
+            if (m.timestamp) {
+                const d = new Date(m.timestamp);
+                const dayKey = d.toDateString();
+                if (dayKey !== lastDate) {
+                    lastDate = dayKey;
+                    const now = new Date();
+                    const todayKey = now.toDateString();
+                    const yesterday = new Date(now);
+                    yesterday.setDate(now.getDate() - 1);
+                    const yKey = yesterday.toDateString();
+                    const label = dayKey === todayKey ? 'Today' : dayKey === yKey ? 'Yesterday' : d.toLocaleDateString();
+                    out.push({ type: 'separator', label });
+                }
+            }
+            out.push({ type: 'msg', index: idx });
+        });
+        return out;
+    }, [messages]);
 
     useEffect(() => {
         const el = chatWindowRef.current;
@@ -47,8 +69,14 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading }) =
 
     return (
         <div ref={chatWindowRef} className="flex-1 p-3 sm:p-4 overflow-y-auto flex flex-col gap-6">
-            {messages.map((msg, index) => (
-                <Message key={index} message={msg} />
+            {itemsWithSeparators.map((item, i) => (
+                item.type === 'separator' ? (
+                    <div key={`sep-${i}`} className="sticky top-2 z-10 self-center text-xs text-gray-400 bg-[#0d1117] border border-[#30363d] rounded-full px-3 py-0.5 shadow-sm">
+                        {item.label}
+                    </div>
+                ) : (
+                    <Message key={`msg-${i}`} message={messages[item.index]} />
+                )
             ))}
             {isLoading && <TypingIndicator />}
             {showScrollDown && (

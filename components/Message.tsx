@@ -14,9 +14,19 @@ const CopyIcon: React.FC = () => ( <svg xmlns="http://www.w3.org/2000/svg" width
 const CheckIcon: React.FC = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> );
 
 // --- HELPERS ---
+const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const formatText = (text: string) => {
     if (!text) return { __html: '' };
-    const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/^- (.*$)/gm, '<ul class="list-outside"><li class="ml-4 list-disc">$1</li></ul>').replace(/<\/ul>\s*<ul>/g, '').replace(/(\r\n|\n|\r)/g, '<br>');
+    // Fenced code blocks
+    let formatted = text.replace(/```([\s\S]*?)```/g, (_, code) => `<pre class="bg-[#0b0f14] border border-[#30363d] rounded-md p-3 overflow-x-auto"><code>${escapeHtml(code.trim())}</code></pre>`);
+    // Inline code
+    formatted = formatted.replace(/`([^`]+)`/g, '<code class="bg-[#0b0f14] border border-[#30363d] rounded px-1 py-0.5">$1</code>');
+    // Bold / italic
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+    // Bulleted list
+    formatted = formatted.replace(/^- (.*$)/gm, '<ul class="list-outside"><li class="ml-4 list-disc">$1</li></ul>').replace(/<\/ul>\s*<ul>/g, '');
+    // Line breaks
+    formatted = formatted.replace(/(\r\n|\n|\r)/g, '<br>');
     return { __html: formatted };
 };
 
@@ -139,6 +149,15 @@ export const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
         return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
+    const [copied, setCopied] = useState(false);
+    const handleCopy = () => {
+        const text = message.content || '';
+        navigator.clipboard.writeText(text).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        });
+    };
+
     return (
         <div className={`group relative flex items-start gap-3 w-full ${isUser ? 'flex-row-reverse' : ''}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${isUser ? 'bg-blue-600' : 'bg-[#21262d] border border-[#30363d]'}`}>
@@ -146,6 +165,15 @@ export const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
             </div>
             <div className="flex-1 max-w-[85%] sm:max-w-md">
                 <div className={`relative rounded-lg shadow-md ${getMessageStyle()}`}>
+                    {!isReport && (
+                        <button
+                            onClick={handleCopy}
+                            className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 bg-[#21262d] border border-[#30363d] text-gray-300 rounded px-2 py-0.5 text-2xs transition-opacity"
+                            aria-label="Copy message"
+                        >
+                            {copied ? 'Copied' : 'Copy'}
+                        </button>
+                    )}
                     {renderContent()}
                 </div>
             </div>

@@ -9,6 +9,8 @@ import { NewChatForm } from './components/NewChatForm';
 import { HistorySidebar } from './components/HistorySidebar';
 import { useLanguage } from './contexts/LanguageContext';
 import { useApiConfig } from './contexts/ApiConfigContext';
+import { ApiConfigModal } from './components/ApiConfigModal';
+import { KnowledgeModal } from './components/KnowledgeModal';
 
 const App: React.FC = () => {
   const { language } = useLanguage();
@@ -36,6 +38,8 @@ const App: React.FC = () => {
   });
 
   const activeChat = activeChatId ? chats[activeChatId] : null;
+  const [showApi, setShowApi] = useState(false);
+  const [showKb, setShowKb] = useState(false);
 
   useEffect(() => {
     try {
@@ -262,6 +266,8 @@ const App: React.FC = () => {
             info={activeChat?.info}
             isFinished={activeChat?.isFinished}
             onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+            onOpenApi={() => setShowApi(true)}
+            onOpenKb={() => setShowKb(true)}
           />
           {!activeChat ? (
             <NewChatForm onStart={handleStartChat} />
@@ -276,6 +282,8 @@ const App: React.FC = () => {
       {isSidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsSidebarOpen(false)} />
       )}
+      <ApiConfigModal isOpen={showApi} onClose={() => setShowApi(false)} />
+      <KnowledgeModal isOpen={showKb} onClose={() => setShowKb(false)} />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import type { ChatSession } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -29,7 +29,13 @@ const TrashIcon: React.FC = () => (
 
 export const HistorySidebar: React.FC<HistorySidebarProps> = ({ isSidebarOpen, chats, activeChatId, onSelectChat, onNewChat, onDeleteChat }) => {
     const { t } = useLanguage();
-    const chatList = Object.values(chats).sort((a: ChatSession, b: ChatSession) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const [query, setQuery] = useState('');
+    const chatList = useMemo(() => {
+        const items = Object.values(chats).sort((a: ChatSession, b: ChatSession) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        if (!query.trim()) return items;
+        const q = query.toLowerCase();
+        return items.filter((c) => c.info.id.toLowerCase().includes(q) || c.info.type.toLowerCase().includes(q));
+    }, [chats, query]);
 
     const formatTimeAgo = (isoString?: string): string => {
         if (!isoString) return '';
@@ -68,6 +74,14 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({ isSidebarOpen, c
                         <PlusIcon />
                         {t('sidebar.newCase')}
                     </button>
+                </div>
+                <div className="p-3 border-b border-[#30363d]">
+                    <input
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder={t('sidebar.caseHistory') + '…'}
+                        className="w-full p-2 bg-[#0d1117] border border-[#30363d] rounded-md text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    />
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     <h3 className="p-4 text-sm font-semibold text-gray-400">{t('sidebar.caseHistory')}</h3>
