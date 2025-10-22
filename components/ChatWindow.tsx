@@ -7,12 +7,14 @@ import type { ChatMessage } from '../types';
 interface ChatWindowProps {
     messages: ChatMessage[];
     isLoading: boolean;
+    uiMode?: 'classic' | 'modern';
 }
 
-export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading }) => {
+export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading, uiMode = 'modern' }) => {
     const chatWindowRef = useRef<HTMLDivElement>(null);
     const [showScrollDown, setShowScrollDown] = useState(false);
     const itemsWithSeparators = useMemo(() => {
+        if (uiMode !== 'modern') return null;
         const out: Array<{ type: 'separator'; label: string } | { type: 'msg'; index: number }> = [];
         let lastDate: string | null = null;
         messages.forEach((m, idx) => {
@@ -33,7 +35,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading }) =
             out.push({ type: 'msg', index: idx });
         });
         return out;
-    }, [messages]);
+    }, [messages, uiMode]);
 
     useEffect(() => {
         const el = chatWindowRef.current;
@@ -67,19 +69,25 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, isLoading }) =
         </svg>
     );
 
+    const bottomPad = uiMode === 'modern' ? 'pb-[calc(env(safe-area-inset-bottom)+96px)] md:pb-24' : 'pb-4';
     return (
-        <div ref={chatWindowRef} className="flex-1 p-3 sm:p-4 overflow-y-auto flex flex-col gap-6">
-            {itemsWithSeparators.map((item, i) => (
-                item.type === 'separator' ? (
-                    <div key={`sep-${i}`} className="sticky top-2 z-10 self-center text-xs text-gray-400 bg-[#0d1117] border border-[#30363d] rounded-full px-3 py-0.5 shadow-sm">
-                        {item.label}
-                    </div>
-                ) : (
-                    <Message key={`msg-${i}`} message={messages[item.index]} />
-                )
-            ))}
+        <div ref={chatWindowRef} className={`flex-1 p-3 sm:p-4 ${bottomPad} overflow-y-auto flex flex-col gap-6`}>
+            {uiMode === 'modern' && itemsWithSeparators
+                ? itemsWithSeparators.map((item, i) => (
+                    item.type === 'separator' ? (
+                        <div key={`sep-${i}`} className="sticky top-2 z-10 self-center text-xs text-gray-400 bg-[#0d1117] border border-[#30363d] rounded-full px-3 py-0.5 shadow-sm">
+                            {item.label}
+                        </div>
+                    ) : (
+                        <Message key={`msg-${i}`} message={messages[item.index]} />
+                    )
+                ))
+                : messages.map((msg, index) => (
+                    <Message key={index} message={msg} />
+                ))
+            }
             {isLoading && <TypingIndicator />}
-            {showScrollDown && (
+            {uiMode === 'modern' && showScrollDown && (
                 <button
                     onClick={scrollToBottom}
                     className="fixed right-4 bottom-28 md:bottom-24 bg-[#21262d]/90 border border-[#30363d] text-gray-200 rounded-full shadow-lg p-3 backdrop-blur hover:bg-[#30363d] transition-colors"

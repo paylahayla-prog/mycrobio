@@ -36,6 +36,14 @@ const App: React.FC = () => {
     }
     return true;
   });
+  const [uiMode, setUiMode] = useState<'classic' | 'modern'>(() => {
+    try {
+      const saved = localStorage.getItem('uiMode');
+      return saved === 'modern' ? 'modern' : 'classic';
+    } catch {
+      return 'classic';
+    }
+  });
 
   const activeChat = activeChatId ? chats[activeChatId] : null;
   const [showApi, setShowApi] = useState(false);
@@ -53,6 +61,10 @@ const App: React.FC = () => {
       console.error('Failed to save chats to localStorage:', error);
     }
   }, [chats, activeChatId]);
+
+  useEffect(() => {
+    try { localStorage.setItem('uiMode', uiMode); } catch {}
+  }, [uiMode]);
 
   const updateActiveChat = (updater: (chat: ChatSession) => ChatSession) => {
     if (!activeChatId) return;
@@ -250,9 +262,12 @@ const App: React.FC = () => {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  const shellBgOuter = uiMode === 'modern' ? 'bg-gradient-to-b from-[#0b1220] to-[#0d1117]' : 'bg-[#0d1117]';
+  const shellBgInner = uiMode === 'modern' ? 'bg-[#0d1117]' : 'bg-[#0d1117]';
+
   return (
-    <div className="text-gray-300 flex items-center justify-center min-h-[100dvh] bg-gradient-to-b from-[#0b1220] to-[#0d1117]">
-      <div className="w-full h-full max-w-6xl mx-auto flex bg-[#0d1117]/90 backdrop-blur-sm border border-[#30363d] rounded-lg shadow-2xl overflow-hidden relative">
+    <div className={`text-gray-300 min-h-[100dvh] ${shellBgOuter}`}>
+      <div className={`w-screen h-[100dvh] flex ${shellBgInner} overflow-hidden relative`}>
         <HistorySidebar
           isSidebarOpen={isSidebarOpen}
           chats={chats}
@@ -268,13 +283,15 @@ const App: React.FC = () => {
             onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
             onOpenApi={() => setShowApi(true)}
             onOpenKb={() => setShowKb(true)}
+            uiMode={uiMode}
+            onToggleUiMode={() => setUiMode((m) => (m === 'modern' ? 'classic' : 'modern'))}
           />
           {!activeChat ? (
             <NewChatForm onStart={handleStartChat} />
           ) : (
             <>
-              <ChatWindow messages={activeChat.messages} isLoading={isLoading} />
-              <InputArea onSendMessage={handleSendMessage} quickReplies={quickReplies} isDisabled={isLoading || activeChat.isFinished} />
+              <ChatWindow messages={activeChat.messages} isLoading={isLoading} uiMode={uiMode} />
+              <InputArea onSendMessage={handleSendMessage} quickReplies={quickReplies} isDisabled={isLoading || activeChat.isFinished} uiMode={uiMode} />
             </>
           )}
         </div>

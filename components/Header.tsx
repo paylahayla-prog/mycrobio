@@ -9,6 +9,8 @@ interface HeaderProps {
     onToggleSidebar: () => void;
     onOpenApi: () => void;
     onOpenKb: () => void;
+    uiMode: 'classic' | 'modern';
+    onToggleUiMode: () => void;
 }
 
 const FileCodeIcon: React.FC = () => (
@@ -42,10 +44,14 @@ const LanguageSwitcher: React.FC = () => {
     );
 };
 
-export const Header: React.FC<HeaderProps> = ({ info, isFinished, onToggleSidebar, onOpenApi, onOpenKb }) => {
+export const Header: React.FC<HeaderProps> = ({ info, isFinished, onToggleSidebar, onOpenApi, onOpenKb, uiMode, onToggleUiMode }) => {
     const { t } = useLanguage();
+    const headerStyle = uiMode === 'modern'
+        ? 'bg-[#161b22]/95 backdrop-blur supports-[backdrop-filter]:backdrop-blur'
+        : 'bg-[#161b22]';
+    const positionClass = uiMode === 'modern' ? 'sticky top-0 z-30' : '';
     return (
-        <header className="bg-[#161b22]/95 backdrop-blur supports-[backdrop-filter]:backdrop-blur p-4 rounded-t-lg flex items-center gap-4 flex-wrap border-b border-[#30363d] flex-shrink-0 sticky top-0 z-30">
+        <header className={`${headerStyle} p-4 rounded-t-lg flex items-center gap-4 flex-wrap border-b border-[#30363d] flex-shrink-0 ${positionClass}`}>
             <button
                 onClick={onToggleSidebar}
                 className="p-1 rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"
@@ -74,6 +80,9 @@ export const Header: React.FC<HeaderProps> = ({ info, isFinished, onToggleSideba
             </div>
             <button onClick={onOpenKb} className="text-xs font-bold bg-[#21262d] border border-[#30363d] text-gray-300 py-1 px-3 rounded-md hover:bg-[#30363d] transition-colors">KB</button>
             <button onClick={onOpenApi} className="text-xs font-bold bg-[#21262d] border border-[#30363d] text-gray-300 py-1 px-3 rounded-md hover:bg-[#30363d] transition-colors">API</button>
+            <button onClick={onToggleUiMode} className="text-xs font-bold bg-[#21262d] border border-[#30363d] text-gray-300 py-1 px-3 rounded-md hover:bg-[#30363d] transition-colors" aria-label="Toggle UI density">
+                {uiMode === 'modern' ? 'Modern' : 'Classic'}
+            </button>
             <LanguageSwitcher />
         </header>
     );
