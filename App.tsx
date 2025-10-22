@@ -28,7 +28,12 @@ const App: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; // open on md+, closed on mobile
+    }
+    return true;
+  });
 
   const activeChat = activeChatId ? chats[activeChatId] : null;
 
@@ -230,9 +235,20 @@ const App: React.FC = () => {
     }
   };
 
+  // Ensure sidebar behavior sensible when resizing to desktop
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(true);
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   return (
-    <div className="text-gray-300 flex items-center justify-center h-screen bg-[#0d1117]">
-      <div className="w-full h-full max-w-6xl mx-auto flex bg-[#0d1117] border border-[#30363d] rounded-lg shadow-2xl overflow-hidden">
+    <div className="text-gray-300 flex items-center justify-center min-h-[100dvh] bg-[#0d1117]">
+      <div className="w-full h-full max-w-6xl mx-auto flex bg-[#0d1117] border border-[#30363d] rounded-lg shadow-2xl overflow-hidden relative">
         <HistorySidebar
           isSidebarOpen={isSidebarOpen}
           chats={chats}
@@ -257,6 +273,9 @@ const App: React.FC = () => {
           )}
         </div>
       </div>
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
     </div>
   );
 };

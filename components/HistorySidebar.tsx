@@ -57,6 +57,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({ isSidebarOpen, c
             transition-all duration-300 ease-in-out
             ${isSidebarOpen ? 'w-64 p-0' : 'w-0 border-r-0'}
             overflow-hidden
+            fixed md:static inset-y-0 left-0 z-50 md:z-auto
         `}>
             <div className="w-64 h-full flex flex-col">
                  <div className="p-4 border-b border-[#30363d]">

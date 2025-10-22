@@ -144,7 +144,7 @@ export const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${isUser ? 'bg-blue-600' : 'bg-[#21262d] border border-[#30363d]'}`}>
                 {isUser ? <UserIcon /> : <AIIcon />}
             </div>
-            <div className="flex-1 max-w-md">
+            <div className="flex-1 max-w-[85%] sm:max-w-md">
                 <div className={`relative rounded-lg shadow-md ${getMessageStyle()}`}>
                     {renderContent()}
                 </div>
