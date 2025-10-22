@@ -1,4 +1,6 @@
-import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
+﻿import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
+import enData from '../i18n/en.json';
+import frData from '../i18n/fr.json';
 
 type Language = 'en' | 'fr';
 
@@ -10,8 +12,10 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Cache translations to avoid re-fetching
-const translationsCache: { [key in Language]?: Record<string, string> } = {};
+const ALL_TRANSLATIONS: Record<Language, Record<string, string>> = {
+  en: enData as Record<string, string>,
+  fr: frData as Record<string, string>,
+};
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [language, setLanguageState] = useState<Language>(() => {
@@ -19,32 +23,10 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         return (savedLang === 'en' || savedLang === 'fr') ? savedLang : 'en';
     });
     
-    const [currentTranslations, setCurrentTranslations] = useState<Record<string, string>>({});
+    const [currentTranslations, setCurrentTranslations] = useState<Record<string, string>>(ALL_TRANSLATIONS[language]);
 
     useEffect(() => {
-        const loadTranslations = async () => {
-            if (translationsCache[language]) {
-                setCurrentTranslations(translationsCache[language]!);
-                return;
-            }
-
-            try {
-                // Using absolute path from web root
-                const response = await fetch(`/i18n/${language}.json`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                translationsCache[language] = data;
-                setCurrentTranslations(data);
-            } catch (error) {
-                console.error(`Could not load translation file for ${language}:`, error);
-                // Fallback to empty to avoid crash, keys will be shown
-                setCurrentTranslations({});
-            }
-        };
-
-        loadTranslations();
+        setCurrentTranslations(ALL_TRANSLATIONS[language]);
     }, [language]);
 
     const setLanguage = (lang: Language) => {

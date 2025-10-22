@@ -1,4 +1,4 @@
-{
+﻿{
   "header.title": "MicrobeMap AI",
   "header.caseId": "Case ID",
   "header.type": "Type",
@@ -15,12 +15,12 @@
   "time.hoursAgo": "{count} hours ago",
   "time.minutesAgo": "{count} minutes ago",
   "time.justNow": "Just now",
-  "newChat.title": "New Prélèvement Case",
-  "newChat.idLabel": "Prélèvement ID",
+  "newChat.title": "Start a New Case",
+  "newChat.idLabel": "Case ID",
   "newChat.idPlaceholder": "e.g., 2024-12345",
-  "newChat.typeLabel": "Type of Prélèvement",
-  "newChat.typePlaceholder": "e.g., ECBU, Hémoculture",
-  "newChat.countLabel": "Colony Count (Optional)",
+  "newChat.typeLabel": "Specimen Type",
+  "newChat.typePlaceholder": "e.g., urine (ECBU), blood culture",
+  "newChat.countLabel": "Colony Count (optional)",
   "newChat.countPlaceholder": "e.g., >10^5 CFU/mL",
   "newChat.startButton": "Start Identification",
   "input.placeholder": "Type a response, diameter/MIC, or use a command...",
