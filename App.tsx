@@ -247,8 +247,8 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="text-gray-300 flex items-center justify-center min-h-[100dvh] bg-[#0d1117]">
-      <div className="w-full h-full max-w-6xl mx-auto flex bg-[#0d1117] border border-[#30363d] rounded-lg shadow-2xl overflow-hidden relative">
+    <div className="text-gray-300 flex items-center justify-center min-h-[100dvh] bg-gradient-to-b from-[#0b1220] to-[#0d1117]">
+      <div className="w-full h-full max-w-6xl mx-auto flex bg-[#0d1117]/90 backdrop-blur-sm border border-[#30363d] rounded-lg shadow-2xl overflow-hidden relative">
         <HistorySidebar
           isSidebarOpen={isSidebarOpen}
           chats={chats}

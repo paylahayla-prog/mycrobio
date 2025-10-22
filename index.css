@@ -1,0 +1,30 @@
+/* Global polish and mobile-friendly defaults */
+:root {
+  color-scheme: dark;
+}
+
+/* Improve text selection visibility */
+::selection {
+  background: rgba(34, 211, 238, 0.35); /* cyan-400/35 */
+}
+
+/* Reduce tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Smooth scrolling for anchor-like interactions */
+html, body {
+  scroll-behavior: smooth;
+}
+

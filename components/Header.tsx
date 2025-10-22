@@ -45,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({ info, isFinished, onToggleSideba
     const [showApi, setShowApi] = useState(false);
     const [showKb, setShowKb] = useState(false);
     return (
-        <header className="bg-[#161b22] p-4 rounded-t-lg flex items-center gap-4 flex-wrap border-b border-[#30363d] flex-shrink-0">
+        <header className="bg-[#161b22]/95 backdrop-blur supports-[backdrop-filter]:backdrop-blur p-4 rounded-t-lg flex items-center gap-4 flex-wrap border-b border-[#30363d] flex-shrink-0 sticky top-0 z-30">
             <button
                 onClick={onToggleSidebar}
                 className="p-1 rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"

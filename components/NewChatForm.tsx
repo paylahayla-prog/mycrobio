@@ -11,6 +11,12 @@ export const NewChatForm: React.FC<NewChatFormProps> = ({ onStart }) => {
     const [type, setType] = useState('');
     const [count, setCount] = useState('');
     const { t } = useLanguage();
+    const typeSuggestions = [
+        'Urine (ECBU)',
+        'Blood culture',
+        'Sputum',
+        'Wound swab',
+    ];
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,8 +30,8 @@ export const NewChatForm: React.FC<NewChatFormProps> = ({ onStart }) => {
     };
 
     return (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[#0d1117]">
-            <div className="w-full max-w-md bg-[#161b22] p-8 rounded-lg border border-[#30363d] shadow-2xl">
+        <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 bg-transparent">
+            <div className="w-full max-w-md bg-[#161b22]/95 backdrop-blur p-6 sm:p-8 rounded-lg border border-[#30363d] shadow-2xl">
                 <h2 className="text-2xl font-bold text-white mb-6 text-center">{t('newChat.title')}</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
@@ -41,6 +47,21 @@ export const NewChatForm: React.FC<NewChatFormProps> = ({ onStart }) => {
                             placeholder={t('newChat.idPlaceholder')}
                             required
                         />
+                    </div>
+                    <div>
+                        <p className="text-xs text-gray-400 mb-2">Suggestions</p>
+                        <div className="flex gap-2 flex-wrap">
+                            {typeSuggestions.map((s) => (
+                                <button
+                                    type="button"
+                                    key={s}
+                                    onClick={() => setType(s)}
+                                    className="px-3 py-1.5 rounded-full text-xs bg-[#21262d] border border-[#30363d] text-gray-300 hover:bg-[#30363d]"
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                     <div>
                         <label htmlFor="prelevement-type" className="block text-sm font-medium text-gray-300 mb-2">
