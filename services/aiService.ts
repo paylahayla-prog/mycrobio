@@ -64,7 +64,7 @@ const callGemini = async (
   return extractJsonOrFallback(rawText);
 };
 
-const callOpenAICompatible = async (
+const callOpenAICompatibleViaProxy = async (
   conversationHistory: Array<{ role: Role; parts: { text: string }[] }>,
   language: 'en' | 'fr',
   apiKey: string,
@@ -90,6 +90,43 @@ const callOpenAICompatible = async (
   return extractJsonOrFallback(content);
 };
 
+const callOpenAICompatibleDirect = async (
+  conversationHistory: Array<{ role: Role; parts: { text: string }[] }>,
+  language: 'en' | 'fr',
+  apiKey: string,
+  model: string,
+  baseUrl?: string,
+): Promise<AIResponse> => {
+  const urlBase = baseUrl && baseUrl.trim().length > 0 ? baseUrl.replace(/\/$/, '') : 'https://api.openai.com/v1';
+  const extraHeaders: Record<string, string> = {};
+  try {
+    if (urlBase.includes('openrouter.ai')) {
+      extraHeaders['Referer'] = (typeof window !== 'undefined' ? window.location.origin : '');
+      extraHeaders['X-Title'] = 'MicrobeMap AI';
+    }
+  } catch {}
+  const resp = await fetch(`${urlBase}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+      ...extraHeaders,
+    },
+    body: JSON.stringify({
+      model: model || 'gpt-4o-mini',
+      messages: toOpenAIMessages(conversationHistory, language),
+      temperature: 0.2,
+    }),
+  });
+  if (!resp.ok) {
+    const t = await resp.text().catch(() => '');
+    throw new Error(`Provider error: ${resp.status} ${t}`);
+  }
+  const data = await resp.json();
+  const content: string = data?.choices?.[0]?.message?.content ?? '';
+  return extractJsonOrFallback(content);
+};
+
 export const getAiResponse = async (
   conversationHistory: Array<{ role: Role; parts: { text: string }[] }>,
   language: 'en' | 'fr',
@@ -99,7 +136,16 @@ export const getAiResponse = async (
   if (config.provider === 'gemini') {
     return await callGemini(conversationHistory, language, config.apiKey, config.model || 'gemini-2.5-flash');
   }
-  return await callOpenAICompatible(
+  if (config.directClient) {
+    return await callOpenAICompatibleDirect(
+      conversationHistory,
+      language,
+      config.apiKey,
+      config.model || 'gpt-4o-mini',
+      config.provider === 'openai' ? 'https://api.openai.com/v1' : config.baseUrl,
+    );
+  }
+  return await callOpenAICompatibleViaProxy(
     conversationHistory,
     language,
     config.apiKey,
@@ -132,6 +178,29 @@ export const getAiHelp = async (
     ...toOpenAIMessages(conversationHistory, language).filter((m) => m.role !== 'system'),
     { role: 'user', content: `HELP_QUERY: ${query}` },
   ];
+
+  if (config.directClient) {
+    const urlBase = config.provider === 'openai' ? 'https://api.openai.com/v1' : (config.baseUrl || '').replace(/\/$/, '');
+    const extraHeaders: Record<string, string> = {};
+    try {
+      if ((urlBase || '').includes('openrouter.ai')) {
+        extraHeaders['Referer'] = (typeof window !== 'undefined' ? window.location.origin : '');
+        extraHeaders['X-Title'] = 'MicrobeMap AI';
+      }
+    } catch {}
+
+    const resp = await fetch(`${urlBase || 'https://api.openai.com/v1'}/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}`, ...extraHeaders },
+      body: JSON.stringify({ model: config.model || 'gpt-4o-mini', messages, temperature: 0.2 }),
+    });
+    if (!resp.ok) {
+      const t = await resp.text().catch(() => '');
+      throw new Error(`Provider error: ${resp.status} ${t}`);
+    }
+    const data = await resp.json();
+    return data?.choices?.[0]?.message?.content ?? '';
+  }
 
   const helpResp = await fetch('/api/chat', {
     method: 'POST',

@@ -30,6 +30,7 @@ export const ApiConfigModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [apiKey, setApiKey] = useState<string>(config.apiKey);
   const [model, setModel] = useState<string>(config.model || '');
   const [baseUrl, setBaseUrl] = useState<string>(config.baseUrl || '');
+  const [directClient, setDirectClient] = useState<boolean>(!!config.directClient);
   const [selectedPreset, setSelectedPreset] = useState<string>('');
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export const ApiConfigModal: React.FC<Props> = ({ isOpen, onClose }) => {
       setApiKey(config.apiKey);
       setModel(config.model || '');
       setBaseUrl(config.baseUrl || '');
+      setDirectClient(!!config.directClient);
       setSelectedPreset('');
     }
   }, [isOpen]);
@@ -59,7 +61,7 @@ export const ApiConfigModal: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   const onSave = () => {
-    setConfig({ provider, apiKey, model, baseUrl });
+    setConfig({ provider, apiKey, model, baseUrl, directClient });
     onClose();
   };
 
@@ -132,12 +134,20 @@ export const ApiConfigModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       type="button"
                       onClick={() => applyPreset(p)}
                       className={`px-2 py-1 rounded text-xs border ${selectedPreset === p.id ? 'bg-cyan-600 text-white border-cyan-500' : 'bg-[#0d1117] text-gray-200 border-[#30363d] hover:border-gray-500'}`}
-                      title={`${p.baseUrl} • ${p.modelHint}`}
                     >
                       {p.label}
                     </button>
                   ))}
                 </div>
+              </div>
+
+              <div className="mt-2 p-2 border border-[#30363d] rounded bg-[#0d1117]">
+                <label className="flex items-start gap-2 text-sm text-gray-300">
+                  <input type="checkbox" checked={directClient} onChange={(e) => setDirectClient(e.target.checked)} className="mt-0.5" />
+                  <span>
+                    Direct client mode (browser). Calls the provider from your browser instead of the built-in proxy. This exposes your API key and may be blocked by CORS unless the provider explicitly supports browser use (e.g., OpenRouter browser keys, Cohere client tokens).
+                  </span>
+                </label>
               </div>
             </>
           )}
@@ -155,3 +165,6 @@ export const ApiConfigModal: React.FC<Props> = ({ isOpen, onClose }) => {
     </div>
   );
 };
+
+
+

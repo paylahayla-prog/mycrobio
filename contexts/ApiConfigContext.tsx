@@ -7,6 +7,7 @@ export interface ApiConfig {
   apiKey: string;
   model?: string;
   baseUrl?: string; // used for openai-compatible
+  directClient?: boolean; // directly call provider from browser
 }
 
 interface ApiConfigContextValue {
@@ -18,6 +19,7 @@ const DEFAULTS: ApiConfig = {
   provider: 'gemini',
   apiKey: '',
   model: 'gemini-2.5-flash',
+  directClient: false,
 };
 
 const STORAGE_KEY = 'microbeMapApiConfig';
@@ -45,6 +47,7 @@ export const ApiConfigProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       apiKey: c.apiKey,
       model: c.model || (c.provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini'),
       baseUrl: c.baseUrl,
+      directClient: !!c.directClient,
     });
   };
 
