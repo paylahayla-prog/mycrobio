@@ -1,0 +1,5 @@
+{
+  "name": "Copy of MicrobeMap AI - Bacterial Identification Guide good one",
+  "description": "An AI-powered microbiology guide that helps users identify bacteria by asking a series of diagnostic questions based on the 'Bactériologie Médicale' textbook.",
+  "requestFramePermissions": []
+}
